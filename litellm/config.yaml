@@ -1,0 +1,41 @@
+model_list:
+  # Modèle local Ollama (défaut, sans GPU)
+  - model_name: ollama/mistral
+    litellm_params:
+      model: ollama/mistral
+      api_base: http://ollama:11434
+
+  - model_name: ollama/llama3.2
+    litellm_params:
+      model: ollama/llama3.2
+      api_base: http://ollama:11434
+
+  # Modèle OpenAI (fallback payant, si OPENAI_API_KEY présente)
+  - model_name: openai/gpt-4o-mini
+    litellm_params:
+      model: gpt-4o-mini
+      api_key: os.environ/OPENAI_API_KEY
+
+  # vLLM (optionnel — décommenter si GPU disponible)
+  # - model_name: vllm/mistral
+  #   litellm_params:
+  #     model: openai/mistralai/Mistral-7B-Instruct-v0.3
+  #     api_base: http://vllm:8001/v1
+  #     api_key: none
+
+litellm_settings:
+  # Bascule automatique vers OpenAI si Ollama échoue (timeout, OOM)
+  fallbacks:
+    - ollama/mistral:
+        - openai/gpt-4o-mini
+
+  # Suivi des coûts et de la latence
+  success_callback: []
+  failure_callback: []
+
+  # Logs structurés JSON pour les métriques
+  json_logs: true
+
+general_settings:
+  master_key: sk-docucheck
+  store_model_in_db: false

@@ -1,0 +1,121 @@
+services:
+  api:
+    build: ./api
+    container_name: docucheck-api
+    ports:
+      - "8000:8000"
+    environment:
+      - LITELLM_BASE_URL=http://litellm:4000
+      - DOCLING_BASE_URL=http://docling:5001
+      - DATABASE_URL=postgresql://docucheck:docucheck@postgres:5432/docucheck
+      - CONFIDENCE_THRESHOLD=0.80
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      docling:
+        condition: service_started
+      litellm:
+        condition: service_started
+    restart: unless-stopped
+
+  docling:
+    image: ds4sd/docling-serve:latest
+    container_name: docucheck-docling
+    ports:
+      - "5001:5001"
+    environment:
+      - DOCLING_SERVE_ENABLE_UI=true
+    restart: unless-stopped
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: docucheck-litellm
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm/config.yaml:/app/config.yaml
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: docucheck-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # GPU: uncomment for NVIDIA
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    restart: unless-stopped
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: docucheck-n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD:-changeme}
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=docucheck
+      - DB_POSTGRESDB_PASSWORD=docucheck
+      - WEBHOOK_URL=http://localhost:5678/
+    volumes:
+      - ./n8n/workflows:/home/node/.n8n/workflows
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: docucheck-openwebui
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OPENAI_API_BASE_URL=http://litellm:4000/v1
+      - OPENAI_API_KEY=sk-litellm-any
+    volumes:
+      - open_webui_data:/app/backend/data
+    depends_on:
+      - ollama
+      - litellm
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: docucheck-postgres
+    environment:
+      - POSTGRES_USER=docucheck
+      - POSTGRES_PASSWORD=docucheck
+      - POSTGRES_MULTIPLE_DATABASES=docucheck,n8n
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docucheck"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  ollama_data:
+  open_webui_data:

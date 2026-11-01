@@ -1,0 +1,32 @@
+# Secrets
+.env
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+htmlcov/
+.coverage
+
+# Docker
+*.log
+
+# Données (dossiers uploadés — synthétiques commitables dans data/synthetic/)
+data/uploads/
+data/processed/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
