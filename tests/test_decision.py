@@ -1,5 +1,4 @@
 """Tests du moteur de décision TypeSafe Jev (confiance + routage)."""
-import pytest
 
 from api.models.schemas import DossierDecision
 from api.services.decision import decide

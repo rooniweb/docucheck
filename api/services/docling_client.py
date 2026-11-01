@@ -7,7 +7,6 @@ import httpx
 from api.core.config import settings
 from api.models.schemas import DoclingElement, DocumentType, ParsedDocument
 
-
 _KEYWORD_MAP: dict[DocumentType, list[str]] = {
     DocumentType.FORMULAIRE: ["formulaire", "inscription", "candidature", "demande"],
     DocumentType.IDENTITE: ["carte nationale", "passeport", "identité", "cni", "cnib"],

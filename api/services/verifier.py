@@ -3,7 +3,6 @@ from datetime import date
 
 from api.models.schemas import (
     Anomalie,
-    CandidatFields,
     DocumentExtraction,
     DocumentType,
     VerificationResult,

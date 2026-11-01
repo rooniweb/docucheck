@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form
-from fastapi.responses import JSONResponse
 import shutil
 import uuid
 from pathlib import Path
+
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
 from api.models.schemas import DossierReport, DossierSubmit
 from api.services.pipeline import process_dossier

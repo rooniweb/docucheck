@@ -4,14 +4,12 @@ TypeSafe Jev est un moteur de règles typées qui produit une décision + score 
 de signaux booléens pondérés. Même logique que pour le tri d'e-mails, appliquée ici
 au contrôle de dossiers.
 """
+from api.core.config import settings
 from api.models.schemas import (
-    Anomalie,
     DossierDecision,
     DossierDecisionResult,
     VerificationResult,
 )
-from api.core.config import settings
-
 
 _WEIGHTS: dict[str, float] = {
     "complete": 0.40,

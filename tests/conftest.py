@@ -14,12 +14,8 @@ def _make_extraction(
     filename: str,
     **field_overrides,
 ) -> DocumentExtraction:
-    fields = CandidatFields(
-        nom="Diallo",
-        prenom="Mamadou",
-        date_naissance=date(1998, 5, 14),
-        **field_overrides,
-    )
+    defaults = {"nom": "Diallo", "prenom": "Mamadou", "date_naissance": date(1998, 5, 14)}
+    fields = CandidatFields(**{**defaults, **field_overrides})
     return DocumentExtraction(
         doc_type=doc_type,
         filename=filename,

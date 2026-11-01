@@ -1,6 +1,5 @@
 """Orchestration du pipeline complet pour un dossier."""
 import time
-from pathlib import Path
 
 from api.models.schemas import DossierReport, DossierSubmit
 from api.services import decision, docling_client, extractor, verifier

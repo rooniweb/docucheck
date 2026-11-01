@@ -1,5 +1,4 @@
 """Tests unitaires du moteur de vérification (règles Python, sans LLM ni Docker)."""
-import pytest
 
 from api.models.schemas import DocumentType
 from api.services.verifier import verify
@@ -35,7 +34,7 @@ def test_mismatch_date_naissance_detecte(dob_mismatch_extractions):
 
 def test_annee_diplome_futur_detectee(complete_consistent_extractions):
     from datetime import date
-    from api.models.schemas import CandidatFields, DocumentExtraction
+
     exts = list(complete_consistent_extractions)
     # Remplace le relevé par un avec une année future
     for i, e in enumerate(exts):

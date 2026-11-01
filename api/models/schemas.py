@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from datetime import date
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class DocumentType(str, Enum):
+class DocumentType(StrEnum):
     FORMULAIRE = "formulaire_inscription"
     IDENTITE = "piece_identite"
     RELEVE = "releve_notes"
@@ -15,7 +15,7 @@ class DocumentType(str, Enum):
     INCONNU = "inconnu"
 
 
-class DossierDecision(str, Enum):
+class DossierDecision(StrEnum):
     CONFORME = "conforme"
     INCOMPLET = "incomplet"
     A_VERIFIER = "a_verifier"
